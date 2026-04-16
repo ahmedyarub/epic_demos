@@ -19,9 +19,14 @@ def load_private_key(filepath):
 
 def generate_jwt(client_id, private_key):
     """Generates the signed JWT for authentication."""
+    # Note: When using a JWKS URL, the authorization server may require a Key ID (kid)
+    # to identify which key in the JWKS to use for verification.
+    # For this demo, we'll use a static kid 'epic-demo-key'.
+    # Ensure this matches the 'kid' in your generated jwks.json!
     headers = {
         "alg": "RS384",
-        "typ": "JWT"
+        "typ": "JWT",
+        "kid": "epic-demo-key"
     }
 
     now = int(time.time())

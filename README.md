@@ -26,44 +26,52 @@ openssl req -new -x509 -key privatekey.pem -out publickey.pem -days 365 -subj '/
 
 Keep your `privatekey.pem` secure and never commit it to source control!
 
-## 3. Create an App in Epic on FHIR
+## 3. Generate and Host JWK Set (JWKS)
+
+Epic now requires Backend OAuth 2.0 apps to host their public keys at a JWK Set URL (JKU) rather than uploading a static key.
+
+1. Install the required Python dependencies to use the JWKS generator script:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+2. Run the provided script to generate your `jwks.json` from the public key:
+   ```bash
+   python3 generate_jwks.py
+   ```
+   This script will read `publickey.pem` and output a `jwks.json` file. It sets the `kid` (Key ID) to `epic-demo-key`, which matches the `kid` used when generating the JWT in `app.py`.
+
+3. **Host the JWKS File:** You must host this `jwks.json` file on a public HTTPS server. Common free options include GitHub Pages, AWS S3, or standard web hosting. Note the public URL (e.g., `https://my-domain.com/jwks.json`).
+
+## 4. Create an App in Epic on FHIR
 
 1. Log in to [fhir.epic.com](https://fhir.epic.com/).
 2. Navigate to **Build Apps** -> **Create App**.
 3. Fill out the application details:
    - **App Name**: e.g., "Python Backend Demo"
    - **Audience**: Select **Backend Systems** (since this is a system-to-system integration without user intervention).
-4. In the **Security** or **Authentication** section, you will be prompted to provide your public key. Upload the `publickey.pem` file you generated in the previous step, or paste its contents.
+4. In the **Security** or **Authentication** section, provide the **JWK Set URL** where you are hosting your `jwks.json` file.
 5. In the **FHIR Resources** section, make sure you request access to read **Patient** demographics (e.g., `Patient.Read` or equivalent scope).
 6. Save and register the application.
 7. Note down the **Client ID** (also called App ID or Non-Production Client ID) provided by Epic. You will need this for the next step.
 
-## 4. Application Configuration
+## 5. Application Configuration
 
-1. Create a Python virtual environment (optional but recommended):
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
+Create a `.env` file in the root directory and add your Client ID:
+```env
+# Your Epic App's Client ID (from fhir.epic.com)
+EPIC_CLIENT_ID=your_client_id_here
 
-2. Install the required Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+# Path to your generated private key (default is privatekey.pem in the same folder)
+PRIVATE_KEY_PATH=privatekey.pem
 
-3. Create a `.env` file in the root directory and add your Client ID:
-   ```env
-   # Your Epic App's Client ID (from fhir.epic.com)
-   EPIC_CLIENT_ID=your_client_id_here
+# Optional: A specific sandbox patient ID to test with
+TEST_PATIENT_ID=erXuFYUfucBZaryVksYEcMg3
+```
 
-   # Path to your generated private key (default is privatekey.pem in the same folder)
-   PRIVATE_KEY_PATH=privatekey.pem
-
-   # Optional: A specific sandbox patient ID to test with
-   TEST_PATIENT_ID=erXuFYUfucBZaryVksYEcMg3
-   ```
-
-## 5. Running and Testing the App
+## 6. Running and Testing the App
 
 Once configured, simply run the Python script:
 

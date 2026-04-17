@@ -48,14 +48,19 @@ Epic now requires Backend OAuth 2.0 apps to host their public keys at a JWK Set 
 ## 4. Create an App in Epic on FHIR
 
 1. Log in to [fhir.epic.com](https://fhir.epic.com/).
-2. Navigate to **Build Apps** -> **Create App**.
+2. Navigate to **Build Apps** -> **Create**.
 3. Fill out the application details:
    - **App Name**: e.g., "Python Backend Demo"
-   - **Audience**: Select **Backend Systems** (since this is a system-to-system integration without user intervention).
-4. In the **Security** or **Authentication** section, provide the **JWK Set URL** where you are hosting your `jwks.json` file.
-5. In the **FHIR Resources** section, make sure you request access to read **Patient** demographics (e.g., `Patient.Read` or equivalent scope).
-6. Save and register the application.
-7. Note down the **Client ID** (also called App ID or Non-Production Client ID) provided by Epic. You will need this for the next step.
+   - **Primary User Type**: Select **Backend Systems** (since this is a system-to-system integration without user intervention).
+   - **Incoming APIs**: Select the APIs you need, for example, `Patient.Read (R4)`.
+   - **App FHIR Version**: Select `R4`.
+   - **Is this app a confidential client?**: Check this box.
+4. Click **Save** and then **Ready for Production** (or Ready for Sandbox).
+5. Note down the **Non-Production Client ID** provided by Epic. You will need this for the configuration.
+6. Now you need to upload your JWKS URL. On the Build Apps page, select **Review and Manage Downloads** for your new application.
+7. Select the **Non-Production** environment type.
+8. In the **JWK Set URL** section, un-check "Use app-level JWK Set URL", and provide the public URL where you hosted your `jwks.json` file.
+9. Click **Activate**.
 
 ## 5. Application Configuration
 

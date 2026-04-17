@@ -43,7 +43,17 @@ Epic now requires Backend OAuth 2.0 apps to host their public keys at a JWK Set 
    ```
    This script will read `publickey.pem` and output a `jwks.json` file. It sets the `kid` (Key ID) to `epic-demo-key`, which matches the `kid` used when generating the JWT in `app.py`.
 
-3. **Host the JWKS File:** You must host this `jwks.json` file on a public HTTPS server. Common free options include GitHub Pages, AWS S3, or standard web hosting. Note the public URL (e.g., `https://my-domain.com/jwks.json`).
+3. **Host the JWKS File:** You must host this `jwks.json` file on a public HTTPS server.
+
+   **Hosting with GitHub Pages (Free Option):**
+   1. Create a new public repository on GitHub (e.g., `my-epic-jwks`).
+   2. Clone the repository and copy your generated `jwks.json` file into it.
+   3. Commit and push the file to GitHub.
+   4. In your GitHub repository, go to **Settings** -> **Pages**.
+   5. Under **Build and deployment**, select **Deploy from a branch**.
+   6. Under **Branch**, select `main` (or your default branch) and `/ (root)` folder, then click **Save**.
+   7. Wait a few minutes for GitHub to build your site. At the top of the Pages settings, you will see your site URL (e.g., `https://yourusername.github.io/my-epic-jwks/`).
+   8. Your JWK Set URL will be your site URL with `jwks.json` appended: `https://yourusername.github.io/my-epic-jwks/jwks.json`.
 
 ## 4. Create an App in Epic on FHIR
 
